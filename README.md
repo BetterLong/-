@@ -140,6 +140,12 @@
 
 * ## 运行模型
 
+     在运行之前 你需要先安装OpenCL
+     具体参考:
+     >https://www.roselladb.com/install-opencl-orangepi5-debian-ubuntu.htm
+     或者:
+     >https://clehaxze.tw/gemlog/2023/06-17-setting-up-opencl-on-rk3588-using-libmali.gmi
+
      ### 控制台版本:
      用文件编辑器打开 ai/run-ai.sh
 
