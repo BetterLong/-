@@ -39,10 +39,10 @@
 
 &
 
-  *如果你使用的是orangepi官方的散热器 是不是对官方那傻X散热策略感同深受?*
-  *所以你可以使用我优化过的风扇驱动 就项目里那个 "rk3588-orangepi-5-plus.dts" 
-  将其放入下载的内核源码内的 "/arch/arm64/boot/dts/rockchip/" 覆盖掉原来的同名驱动文件即可
-  我实测即便高负载下风扇依然可以做到几乎无声 而温度却并没多大变化*
+      如果你使用的是orangepi官方的散热器 是不是对官方那傻X散热策略感同深受?
+      所以你可以使用我优化过的风扇驱动 就项目里那个 "rk3588-orangepi-5-plus.dts" 
+      将其放入下载的内核源码内的 "/arch/arm64/boot/dts/rockchip/" 覆盖掉原来的同名驱动文件即可
+      我实测即便高负载下风扇依然可以做到几乎无声 而温度却并没多大变化
 
 &
 
@@ -106,26 +106,79 @@
 
   cd 到/examples/huggingface 内
 
-  用python运行huggingface下的 test.py
+  用python运行 huggingface/ 下的 test.py
   >python test.py
 
   等它运行完成后看到这个就代表转换完成:
   >Model has been saved to ./qwen.rkllm!
-  
+
+  >并且输入 ls 能看到 huggingface/ 下有个 qwen.rkllm
+
   >如不是 请自行debug
 
 &
 
-
   现在 下载项目内 "ai.tar.gz" 传至你的开发板并解压 这是包含命令行运行和web网页运行两种大模型运行方式的启动包
   >如你要调整自定义参数 请自行研究rknn-llm-main/doc/下的 "Rockchip_RKLLM_SDK_CN.pdf" 文档 当然 直接使用我调整好的也可
+
+  x86主机退出docker
   
+  然后在x86主机上将模型文件传入开发板的刚刚解压好的 ai/ 文件夹内:
+  >scp ./qwen.rkllm 你的开发板用户@开发板ip:/ai/
 
+  现在 转到开发板并检查 ai/ 下是否有个 qwen.rkllm 你也可以自行修改文件名
+
+&
+
+  自此 模型转换结束
+
+/
+  
 /
 
 /
 
-* 
+* ## 运行模型
+
+     ### 控制台版本:
+     用文件编辑器打开 ai/run-ai.sh
+
+     taskset一栏需要更改:
+     >taskset f0 ./启动程序 ./你转换的模型文件
+
+     >两个启动程序: llm_demo-gpu-2k 是2k上下文和token数量上限 同理 llm_demo-gpu-32k 是32k
+
+     修改完成保存退出 并运行:
+     >./run-ai.sh
+
+     看到这行即运行成功:
+     >rkllm init success
+
+     恭喜!
+
+     ### web网页版本:
+     用文件编辑器打开 ai/server/rkllm_server/run-ai-server.sh
+     >python3 gradio_server.py --target_platform rk3588 --rkllm_model_path /你的模型文件路径
+
+     保存退出并运行:
+     >./run-ai-server.sh
+
+     看到这些代表运行成功:
+     >RKLLM初始化成功！
+     
+     >==============================
+     
+     >Running on local URL:  http://0.0.0.0:8080
+
+     >To create a public link, set `share=True` in `launch()`.
+
+     之后 你可以在web浏览器和你的模型对话 地址是:
+     >你的开发板ip:8080
+
+     恭喜!
+     
+  
+     
 
 
 
